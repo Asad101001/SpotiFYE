@@ -1,7 +1,59 @@
 # title|artist|genre|duration_sec|playCount|rating|path|coverPath
-Virginia Beach|Drake|Hip Hop|251|100|4.5|assets/songs/virginia_beach.mp3|assets/covers/dogs.jpg
-First Person Shooter|Drake|Hip Hop|247|200|4.8|assets/songs/first_person_shooter.mp3|assets/covers/dogs.jpg
-STARGAZING|Travis Scott|Hip Hop|270|300|4.9|assets/songs/stargazing.mp3|assets/covers/astroworld.jpg
-SICKO MODE|Travis Scott|Hip Hop|312|500|5.0|assets/songs/sicko_mode.mp3|assets/covers/astroworld.jpg
-Superhero (Heroes & Villains)|Metro Boomin|Hip Hop|182|250|4.7|assets/songs/superhero.mp3|assets/covers/heroes.jpg
-Creepin'|Metro Boomin|R&B|221|400|4.8|assets/songs/creepin.mp3|assets/covers/heroes.jpg
+7969 Santa|Drake|Hip Hop|211|7512|4.2|assets/songs/Drake - 7969 Santa.mp3|assets/covers/For All The Dogs.jpg
+8am in Charlotte|Drake|Hip Hop|250|17983|4.4|assets/songs/Drake - 8am in Charlotte.mp3|assets/covers/For All The Dogs.jpg
+All The Parties|Drake|Hip Hop|214|41648|4.6|assets/songs/Drake - All The Parties.mp3|assets/covers/For All The Dogs.jpg
+Amen|Drake|Hip Hop|215|35466|4.8|assets/songs/Drake - Amen.mp3|assets/covers/For All The Dogs.jpg
+Another Late Night|Drake|Hip Hop|204|3113|4.0|assets/songs/Drake - Another Late Night.mp3|assets/covers/For All The Dogs.jpg
+Away From Home|Drake|Hip Hop|238|35734|4.5|assets/songs/Drake - Away From Home.mp3|assets/covers/For All The Dogs.jpg
+Bahamas Promises|Drake|Hip Hop|214|24709|4.3|assets/songs/Drake - Bahamas Promises.mp3|assets/covers/For All The Dogs.jpg
+BBL Love (Interlude)|Drake|Hip Hop|218|12330|4.6|assets/songs/Drake - BBL Love (Interlude).mp3|assets/covers/For All The Dogs.jpg
+Calling For You|Drake|Hip Hop|225|8827|4.3|assets/songs/Drake - Calling For You.mp3|assets/covers/For All The Dogs.jpg
+Daylight|Drake|Hip Hop|233|47086|4.3|assets/songs/Drake - Daylight.mp3|assets/covers/For All The Dogs.jpg
+Drew A Picasso|Drake|Hip Hop|237|44400|4.9|assets/songs/Drake - Drew A Picasso.mp3|assets/covers/For All The Dogs.jpg
+Evil Ways|Drake|Hip Hop|256|34920|4.4|assets/songs/Drake - Evil Ways.mp3|assets/covers/For All The Dogs.jpg
+Fear Of Heights|Drake|Hip Hop|182|11607|4.4|assets/songs/Drake - Fear Of Heights.mp3|assets/covers/For All The Dogs.jpg
+First Person Shooter|Drake|Hip Hop|189|2060|4.3|assets/songs/Drake - First Person Shooter.mp3|assets/covers/For All The Dogs.jpg
+Gently|Drake|Hip Hop|233|2959|5.0|assets/songs/Drake - Gently.mp3|assets/covers/For All The Dogs.jpg
+IDGAF|Drake|Hip Hop|259|25579|4.5|assets/songs/Drake - IDGAF.mp3|assets/covers/For All The Dogs.jpg
+Members Only|Drake|Hip Hop|233|6235|4.6|assets/songs/Drake - Members Only.mp3|assets/covers/For All The Dogs.jpg
+Polar Opposites|Drake|Hip Hop|196|31399|4.7|assets/songs/Drake - Polar Opposites.mp3|assets/covers/For All The Dogs.jpg
+Red Button|Drake|Hip Hop|218|41093|4.7|assets/songs/Drake - Red Button .mp3|assets/covers/For All The Dogs.jpg
+Rich Baby Daddy|Drake|Hip Hop|241|24858|4.4|assets/songs/Drake - Rich Baby Daddy.mp3|assets/covers/For All The Dogs.jpg
+Slime You Out|Drake|Hip Hop|180|5050|4.6|assets/songs/Drake - Slime You Out.mp3|assets/covers/For All The Dogs.jpg
+Stories About My Brother|Drake|Hip Hop|196|19173|4.8|assets/songs/Drake - Stories About My Brother .mp3|assets/covers/For All The Dogs.jpg
+The Shoe Fits|Drake|Hip Hop|242|25333|4.9|assets/songs/Drake - The Shoe Fits .mp3|assets/covers/For All The Dogs.jpg
+Tried Our Best|Drake|Hip Hop|198|30815|4.7|assets/songs/Drake - Tried Our Best.mp3|assets/covers/For All The Dogs.jpg
+Virginia Beach|Drake|Hip Hop|246|3631|4.9|assets/songs/Drake - Virginia Beach.mp3|assets/covers/For All The Dogs.jpg
+What Would Pluto Do|Drake|Hip Hop|216|23878|4.7|assets/songs/Drake - What Would Pluto Do.mp3|assets/covers/For All The Dogs.jpg
+Wick Man|Drake|Hip Hop|204|15125|4.9|assets/songs/Drake - Wick Man.mp3|assets/covers/For All The Dogs.jpg
+You Broke My Heart|Drake|Hip Hop|185|27702|4.6|assets/songs/Drake - You Broke My Heart .mp3|assets/covers/For All The Dogs.jpg
+All The Money ft. Gunna|Metro Boomin|Hip Hop|203|26386|4.6|assets/songs/Metro Boomin - All The Money ft. Gunna .mp3|assets/covers/HEROES & VILLAINS.jpg
+Around Me ft. Don Toliver|Metro Boomin|Hip Hop|235|17193|4.9|assets/songs/Metro Boomin - Around Me ft. Don Toliver .mp3|assets/covers/HEROES & VILLAINS.jpg
+Creepin ft. The Weeknd 21 Savage|Metro Boomin|Hip Hop|242|33596|4.0|assets/songs/Metro Boomin - Creepin ft. The Weeknd 21 Savage .mp3|assets/covers/HEROES & VILLAINS.jpg
+Feel The Fiyaaaah ft. A$AP Rocky Takeoff|Metro Boomin|Hip Hop|210|26777|4.5|assets/songs/Metro Boomin - Feel The Fiyaaaah ft. A$AP Rocky Takeoff .mp3|assets/covers/HEROES & VILLAINS.jpg
+Lock On Me ft. Travis Scott Future|Metro Boomin|Hip Hop|246|27437|4.1|assets/songs/Metro Boomin - Lock On Me ft. Travis Scott Future .mp3|assets/covers/HEROES & VILLAINS.jpg
+Metro Spider ft. Young Thug|Metro Boomin|Hip Hop|180|20534|4.2|assets/songs/Metro Boomin - Metro Spider ft. Young Thug .mp3|assets/covers/HEROES & VILLAINS.jpg
+Niagara Falls (Foot or 2) ft. Travis Scott 21 Savage|Metro Boomin|Hip Hop|254|19775|4.4|assets/songs/Metro Boomin - Niagara Falls (Foot or 2) ft. Travis Scott 21 Savage .mp3|assets/covers/HEROES & VILLAINS.jpg
+Raindrops ft. Travis Scott|Metro Boomin|Hip Hop|258|34772|4.9|assets/songs/Metro Boomin - Raindrops ft. Travis Scott .mp3|assets/covers/HEROES & VILLAINS.jpg
+Superhero ft. Future|Metro Boomin|Hip Hop|226|47023|4.0|assets/songs/Metro Boomin - Superhero ft. Future .mp3|assets/covers/HEROES & VILLAINS.jpg
+Too Many Nights ft. Don Toliver Future|Metro Boomin|Hip Hop|217|21349|4.7|assets/songs/Metro Boomin - Too Many Nights ft. Don Toliver Future .mp3|assets/covers/HEROES & VILLAINS.jpg
+Trance ft. Travis Scott Young Thug|Metro Boomin|Hip Hop|183|10199|4.9|assets/songs/Metro Boomin - Trance ft. Travis Scott Young Thug .mp3|assets/covers/HEROES & VILLAINS.jpg
+Umbrella|Metro Boomin|Hip Hop|186|22065|4.8|assets/songs/Metro Boomin - Umbrella.mp3|assets/covers/HEROES & VILLAINS.jpg
+Walk Em Down (Don't Kill Civilians) ft. 21 Savage Mustafa|Metro Boomin|Hip Hop|228|10619|4.3|assets/songs/Metro Boomin - Walk Em Down (Don't Kill Civilians) ft. 21 Savage Mustafa.mp3|assets/covers/HEROES & VILLAINS.jpg
+I Can't Save You (Interlude) (Visualizer) ft. Don Toliver|Metro Boomin, Future|Hip Hop|245|3505|5.0|assets/songs/Metro Boomin, Future - I Can't Save You (Interlude) (Visualizer) ft. Don Toliver.mp3|assets/covers/HEROES & VILLAINS.jpg
+5% TINT|Travis Scott|Hip Hop|188|19970|4.2|assets/songs/Travis Scott - 5% TINT .mp3|assets/covers/Astroworld.jpg
+ASTROTHUNDER|Travis Scott|Hip Hop|182|13379|4.7|assets/songs/Travis Scott - ASTROTHUNDER .mp3|assets/covers/Astroworld.jpg
+BUTTERFLY EFFECT|Travis Scott|Hip Hop|238|32498|4.7|assets/songs/Travis Scott - BUTTERFLY EFFECT .mp3|assets/covers/Astroworld.jpg
+CAN'T SAY ft. Don Toliver|Travis Scott|Hip Hop|223|36434|4.7|assets/songs/Travis Scott - CAN'T SAY ft. Don Toliver .mp3|assets/covers/Astroworld.jpg
+CAROUSEL|Travis Scott|Hip Hop|258|21229|4.6|assets/songs/Travis Scott - CAROUSEL .mp3|assets/covers/Astroworld.jpg
+COFFEE BEAN|Travis Scott|Hip Hop|193|49350|4.4|assets/songs/Travis Scott - COFFEE BEAN .mp3|assets/covers/Astroworld.jpg
+HOUSTONFORNICATION|Travis Scott|Hip Hop|254|12004|4.3|assets/songs/Travis Scott - HOUSTONFORNICATION .mp3|assets/covers/Astroworld.jpg
+NC-17 ft. 21 Savage|Travis Scott|Hip Hop|225|34179|4.4|assets/songs/Travis Scott - NC-17 ft. 21 Savage.mp3|assets/covers/Astroworld.jpg
+NO BYSTANDERS ft. Juice Wrld|Travis Scott|Hip Hop|238|12752|4.3|assets/songs/Travis Scott - NO BYSTANDERS ft. Juice Wrld .mp3|assets/covers/Astroworld.jpg
+R.I.P. SCREW|Travis Scott|Hip Hop|233|46984|4.5|assets/songs/Travis Scott - R.I.P. SCREW .mp3|assets/covers/Astroworld.jpg
+SICKO MODE ft. Drake|Travis Scott|Hip Hop|211|22131|4.0|assets/songs/Travis Scott - SICKO MODE ft. Drake .mp3|assets/covers/Astroworld.jpg
+SKELETONS ft. The Weeknd|Travis Scott|Hip Hop|247|37806|4.4|assets/songs/Travis Scott - SKELETONS ft. The Weeknd .mp3|assets/covers/Astroworld.jpg
+STARGAZING  Audio|Travis Scott|Hip Hop|184|36716|4.4|assets/songs/Travis Scott - STARGAZING  Audio .mp3|assets/covers/Astroworld.jpg
+STOP TRYING TO BE GOD ft. James Blake Stevie Wonder Kid Cudi|Travis Scott|Hip Hop|180|34407|5.0|assets/songs/Travis Scott - STOP TRYING TO BE GOD ft. James Blake Stevie Wonder Kid Cudi .mp3|assets/covers/Astroworld.jpg
+WHO WHAT|Travis Scott|Hip Hop|236|26532|4.5|assets/songs/Travis Scott - WHO WHAT  .mp3|assets/covers/Astroworld.jpg
+YOSEMITE ft. Gunna|Travis Scott|Hip Hop|201|37566|4.3|assets/songs/Travis Scott - YOSEMITE ft. Gunna .mp3|assets/covers/Astroworld.jpg
