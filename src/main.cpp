@@ -52,9 +52,25 @@ int main(void)
         insertIntoPlaylist(librarySongs[i]);
     }
 
+    // Texture state for dynamic Album Art
+    Texture2D currentAlbumArt = { 0 };
+    Node* lastTrackedSong = nullptr;
+
     // Main rendering loop
     while (!WindowShouldClose())
     {
+        // Check if the song has changed, update texture
+        if (currentSong != lastTrackedSong) {
+            if (currentAlbumArt.id > 0) {
+                UnloadTexture(currentAlbumArt); // Free old image from VRAM
+                currentAlbumArt.id = 0;
+            }
+            if (currentSong != nullptr && !currentSong->song->coverPath.empty()) {
+                currentAlbumArt = LoadTexture(currentSong->song->coverPath.c_str());
+            }
+            lastTrackedSong = currentSong;
+        }
+
         // Update logic (Keyboard Input for Playlist Navigation)
         if (IsKeyPressed(KEY_RIGHT)) {
             nextSong();
@@ -108,8 +124,17 @@ int main(void)
             // 5. Bottom Panel: Media Player Controls
             DrawGlassPanel(bottomPlayer, nullptr);
             
-            // Album Art Box Placeholder
-            DrawRectangleRounded((Rectangle){bottomPlayer.x + 20, bottomPlayer.y + 20, 80, 80}, 0.1f, 8, DARKGRAY);
+            // Album Art Box
+            if (currentAlbumArt.id > 0) {
+                // Scale texture to exactly 80x80
+                Rectangle sourceRec = { 0.0f, 0.0f, (float)currentAlbumArt.width, (float)currentAlbumArt.height };
+                Rectangle destRec = { bottomPlayer.x + 20, bottomPlayer.y + 20, 80.0f, 80.0f };
+                Vector2 origin = { 0.0f, 0.0f };
+                DrawTexturePro(currentAlbumArt, sourceRec, destRec, origin, 0.0f, WHITE);
+            } else {
+                // Fallback Placeholder
+                DrawRectangleRounded((Rectangle){bottomPlayer.x + 20, bottomPlayer.y + 20, 80, 80}, 0.1f, 8, DARKGRAY);
+            }
             
             if (currentSong != nullptr) {
                 DrawText("Now Playing", bottomPlayer.x + 120, bottomPlayer.y + 30, 20, textPrimary);
@@ -130,6 +155,10 @@ int main(void)
             DrawText(">|", bottomPlayer.x + 630, bottomPlayer.y + 25, 24, textPrimary);
 
         EndDrawing();
+    }
+
+    if (currentAlbumArt.id > 0) {
+        UnloadTexture(currentAlbumArt);
     }
 
     // De-Initialization

@@ -1,6 +1,7 @@
 # title|artist|genre|duration_sec|playCount|rating|path|coverPath
-Blinding Lights|The Weeknd|Synthpop|200|450|4.9|assets/songs/blinding_lights.mp3|assets/covers/after_hours.jpg
-Midnight City|M83|Electronic|243|320|4.8|assets/songs/midnight_city.mp3|assets/covers/hurry_up.jpg
-Nightcall|Kavinsky|Synthwave|259|210|4.7|assets/songs/nightcall.mp3|assets/covers/outrun.jpg
-Starboy|The Weeknd|Pop|230|510|4.9|assets/songs/starboy.mp3|assets/covers/starboy.jpg
-Resonance|HOME|Chillwave|212|180|4.6|assets/songs/resonance.mp3|assets/covers/odyssey.jpg
+Virginia Beach|Drake|Hip Hop|251|100|4.5|assets/songs/virginia_beach.mp3|assets/covers/dogs.jpg
+First Person Shooter|Drake|Hip Hop|247|200|4.8|assets/songs/first_person_shooter.mp3|assets/covers/dogs.jpg
+STARGAZING|Travis Scott|Hip Hop|270|300|4.9|assets/songs/stargazing.mp3|assets/covers/astroworld.jpg
+SICKO MODE|Travis Scott|Hip Hop|312|500|5.0|assets/songs/sicko_mode.mp3|assets/covers/astroworld.jpg
+Superhero (Heroes & Villains)|Metro Boomin|Hip Hop|182|250|4.7|assets/songs/superhero.mp3|assets/covers/heroes.jpg
+Creepin'|Metro Boomin|R&B|221|400|4.8|assets/songs/creepin.mp3|assets/covers/heroes.jpg
