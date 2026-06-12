@@ -1,10 +1,7 @@
 build/
 *.exe
 *.o
-*.obj
+*.res
 .vscode/
-assets/songs/*.mp3
-assets/covers/*.jpg
-assets/covers/*.png
-!assets/songs/.gitkeep
-!assets/covers/.gitkeep
+.vs/
+*.log
