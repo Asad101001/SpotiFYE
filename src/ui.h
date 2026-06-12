@@ -4,6 +4,10 @@
 #include <cstring>
 #include <cmath>
 
+extern Font appFont;
+#define DrawText(text,x,y,s,c) DrawTextEx(appFont,text,{(float)(x),(float)(y)},(float)(s),1.0f,c)
+#define MeasureText(text,s) ((int)MeasureTextEx(appFont,text,(float)(s),1.0f).x)
+
 // ─── AMOLED HOT-PINK THEME ───────────────────────────────────────────────────
 const Color C_BG        = {  0,  0,  0, 255 };
 const Color C_SURF      = {  9,  9,  9, 255 };

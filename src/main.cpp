@@ -1,4 +1,7 @@
 #include <raylib.h>
+
+Font appFont = {0};
+
 #include "ui.h"
 #include "ui_draw.h"
 #include "Library.h"
@@ -12,6 +15,14 @@ int main(void) {
     InitWindow(GetMonitorWidth(0), GetMonitorHeight(0), "SpotiFYE");
     SetTargetFPS(60);
     InitAudioDevice();
+
+    ChangeDirectory(GetApplicationDirectory());
+    if (!DirectoryExists("assets")) {
+        ChangeDirectory("../");
+    }
+
+    appFont = LoadFontEx("assets/font.ttf", 64, 0, 0);
+    SetTextureFilter(appFont.texture, TEXTURE_FILTER_BILINEAR);
 
     // ── Load data ─────────────────────────────────────────────────────────────
     loadLibrary("assets/library.txt");
@@ -74,6 +85,7 @@ int main(void) {
     }
 
     // ── Cleanup ───────────────────────────────────────────────────────────────
+    if (appFont.texture.id > 0) UnloadFont(appFont);
     if (albumArt.id > 0)  UnloadTexture(albumArt);
     if (musicLoaded) { StopMusicStream(musicStream); UnloadMusicStream(musicStream); }
     CloseAudioDevice();
