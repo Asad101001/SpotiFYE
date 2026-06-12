@@ -3,7 +3,6 @@ build/
 *.o
 *.obj
 .vscode/
-DSA_Labs/
 assets/songs/*.mp3
 assets/covers/*.jpg
 assets/covers/*.png
