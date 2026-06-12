@@ -6,37 +6,42 @@
 #include "History.h"
 #include "MostPlayed.h"
 
-// ─── VIEW ENUM ───────────────────────────────────────────────────────────────
+// ─── VIEW ────────────────────────────────────────────────────────────────────
 enum View { VIEW_ALL=0, VIEW_MOST_PLAYED=1, VIEW_HISTORY=2 };
-View   currentView   = VIEW_ALL;
+View currentView = VIEW_ALL;
 
 // ─── PLAYER STATE ────────────────────────────────────────────────────────────
-Texture2D albumArt    = { 0 };
-Music     musicStream = { 0 };
+Texture2D albumArt    = {0};
+Music     musicStream = {0};
 bool      musicLoaded = false;
 bool      isPlaying   = false;
-Node*     lastNode    = nullptr;
 
 // ─── PLAYLIST SCROLL ─────────────────────────────────────────────────────────
-int  scrollOffset = 0;
-const int ROW_H   = 50;
+int scrollOffset = 0;
+const int ROW_H  = 52;
 
-// Compute how many rows fit in the playlist panel
-int visibleRows() {
-    return (int)((rMain.height - 52) / ROW_H);
-}
+int visibleRows() { return (int)((rMain.height - 56) / ROW_H); }
 
 // ─── AUDIO ───────────────────────────────────────────────────────────────────
+// Increment play count and rebuild heap so Most Played stays accurate
+void recordPlay(Song* s) {
+    if (!s) return;
+    s->playCount++;
+    heapRebuild();
+}
+
 void loadAndPlay() {
-    if (albumArt.id > 0)  { UnloadTexture(albumArt); albumArt = {0}; }
-    if (musicLoaded)      { StopMusicStream(musicStream); UnloadMusicStream(musicStream); musicLoaded = false; }
-    if (!currentSong)     return;
+    if (albumArt.id > 0) { UnloadTexture(albumArt); albumArt = {0}; }
+    if (musicLoaded)     { StopMusicStream(musicStream); UnloadMusicStream(musicStream); musicLoaded = false; }
+    if (!currentSong)    return;
 
     Song* s = currentSong->song;
-    if (!s->coverPath.empty()) {
+    recordPlay(s);          // ← dynamic play-count increment
+    historyPush(s);         // ← push to stack
+
+    if (!s->coverPath.empty())
         albumArt = LoadTexture(s->coverPath.c_str());
-        // If load failed (bad path), albumArt.id stays 0
-    }
+
     if (!s->path.empty()) {
         musicStream = LoadMusicStream(s->path.c_str());
         PlayMusicStream(musicStream);
@@ -55,248 +60,268 @@ void togglePause() {
 void DrawSidePanel() {
     DrawPanel(rSide);
 
-    // App title
-    DrawText("SpotiFYE", (int)rSide.x + 14, (int)rSide.y + 14, 22, C_ACCENT);
-    DrawText("Music Player", (int)rSide.x + 14, (int)rSide.y + 38, 11, C_TXT3);
-    DrawLineEx({rSide.x+10, rSide.y+56}, {rSide.x+rSide.width-10, rSide.y+56}, 0.6f, C_BORDER);
+    // Title
+    DrawText("SpotiFYE", (int)rSide.x+14, (int)rSide.y+12, 22, C_ACCENT);
+    DrawText("Music Player", (int)rSide.x+14, (int)rSide.y+37, 10, C_TXT3);
+    DrawLineEx({rSide.x+8, rSide.y+54}, {rSide.x+rSide.width-8, rSide.y+54}, 0.5f, C_BORDER);
 
-    const char* labels[] = { "All Songs", "Most Played", "History" };
-    View        views[]  = { VIEW_ALL, VIEW_MOST_PLAYED, VIEW_HISTORY };
-    for (int i = 0; i < 3; i++) {
-        Rectangle r = { rSide.x+10, rSide.y+68 + i*44.0f, rSide.width-20, 36 };
-        if (DrawFlatBtn(r, labels[i], currentView == views[i])) {
-            currentView = views[i];
+    // Nav buttons
+    const char* lbls[] = {"All Songs","Most Played","History"};
+    View        vws[]  = {VIEW_ALL,VIEW_MOST_PLAYED,VIEW_HISTORY};
+    for (int i=0;i<3;i++) {
+        Rectangle r = {rSide.x+8, rSide.y+62+(float)(i*46), rSide.width-16, 38};
+        if (FlatBtn(r, lbls[i], currentView==vws[i])) {
+            currentView  = vws[i];
             scrollOffset = 0;
         }
     }
 
-    // Stats block
-    DrawLineEx({rSide.x+10, rSide.y+rSide.height-110}, {rSide.x+rSide.width-10, rSide.y+rSide.height-110}, 0.6f, C_BORDER);
-    DrawSectionHeader(rSide.x+14, rSide.y+rSide.height-100, rSide.width-28, "LIBRARY");
-    DrawText(TextFormat("%d songs", totalSongs), (int)rSide.x+14, (int)rSide.y+rSide.height-76, 13, C_TXT2);
+    // Stats
+    float sy = rSide.y + rSide.height - 114;
+    DrawLineEx({rSide.x+8,sy},{rSide.x+rSide.width-8,sy},0.5f,C_BORDER);
+    DrawText("LIBRARY", (int)rSide.x+14, (int)sy+10, 10, C_TXT3);
+    DrawText(TextFormat("%d songs", totalSongs), (int)rSide.x+14, (int)sy+28, 13, C_TXT2);
 
     // Current track index
-    int idx = 0;
-    Node* c = playlistHead;
-    while (c && c != currentSong && c->next != playlistHead) { c = c->next; idx++; }
-    DrawText(TextFormat("Track %d / %d", idx+1, totalSongs), (int)rSide.x+14, (int)rSide.y+rSide.height-56, 13, C_TXT2);
+    int idx=0; Node* c=playlistHead;
+    while (c && c!=currentSong && c->next!=playlistHead) { c=c->next; idx++; }
+    DrawText(TextFormat("Track %d / %d", idx+1, totalSongs), (int)rSide.x+14, (int)sy+48, 13, C_TXT2);
 
-    // Repeat status
-    DrawText(repeatAll ? "REPEAT: ON" : "REPEAT: OFF", (int)rSide.x+14, (int)rSide.y+rSide.height-36, 11, repeatAll ? C_ACCENT : C_TXT3);
+    // Repeat status with accent if on
+    Color rc = repeatAll ? C_ACCENT : C_TXT3;
+    DrawText(repeatAll ? "REPEAT  ON" : "REPEAT  OFF", (int)rSide.x+14, (int)sy+70, 11, rc);
+
+    // Mini equalizer in sidebar when playing
+    if (isPlaying)
+        DrawEqualizer(rSide.x+14, rSide.y+rSide.height-34, rSide.width-28, 22, isPlaying);
 }
 
 // ─── PLAYLIST PANEL ──────────────────────────────────────────────────────────
 void DrawPlaylistPanel() {
     DrawPanel(rMain);
 
-    // Header
-    const char* viewTitle = (currentView==VIEW_ALL) ? "All Songs" :
-                            (currentView==VIEW_MOST_PLAYED) ? "Most Played" : "Playback History";
-    DrawText(viewTitle, (int)rMain.x+14, (int)rMain.y+12, 16, C_TXT1);
-    DrawLineEx({rMain.x+10, rMain.y+36}, {rMain.x+rMain.width-10, rMain.y+36}, 0.6f, C_BORDER);
+    const char* titles[] = {"All Songs","Most Played","Playback History"};
+    DrawText(titles[currentView], (int)rMain.x+14, (int)rMain.y+12, 17, C_TXT1);
+    DrawLineEx({rMain.x+8, rMain.y+36}, {rMain.x+rMain.width-8, rMain.y+36}, 0.5f, C_BORDER);
 
     int vr = visibleRows();
+    Vector2 mouse = GetMousePosition();
 
     if (currentView == VIEW_ALL) {
-        // Mouse wheel scroll
-        if (CheckCollisionPointRec(GetMousePosition(), rMain))
+        if (CheckCollisionPointRec(mouse, rMain))
             scrollOffset -= (int)GetMouseWheelMove();
-        int maxScroll = totalSongs - vr;
+        int maxSc = totalSongs - vr;
         if (scrollOffset < 0) scrollOffset = 0;
-        if (maxScroll > 0 && scrollOffset > maxScroll) scrollOffset = maxScroll;
+        if (maxSc>0 && scrollOffset>maxSc) scrollOffset=maxSc;
 
-        // Walk linked list to scroll offset
         Node* cur = playlistHead;
-        for (int s = 0; s < scrollOffset && cur && cur->next != playlistHead; s++)
-            cur = cur->next;
+        for (int s=0; s<scrollOffset && cur && cur->next!=playlistHead; s++) cur=cur->next;
 
-        int row = 0;
-        while (cur && row < vr && cur->next != playlistHead) {
-            bool active  = (cur == currentSong);
-            bool hovered = CheckCollisionPointRec(GetMousePosition(),
-                           {rMain.x+8, rMain.y+42+(float)(row*ROW_H), rMain.width-16, (float)(ROW_H-3)});
-            DrawCard({rMain.x+8, rMain.y+42+(float)(row*ROW_H), rMain.width-16, (float)(ROW_H-3)}, active, hovered && !active);
+        int row=0;
+        while (cur && row<vr && cur!=nullptr) {
+            // Stop if we wrapped back to head in repeat mode
+            if (row>0 && cur==playlistHead) break;
 
-            if (hovered && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
+            bool active = (cur==currentSong);
+            Rectangle rr = {rMain.x+8, rMain.y+42+(float)(row*ROW_H), rMain.width-16, (float)(ROW_H-4)};
+            bool hov = CheckCollisionPointRec(mouse, rr);
+
+            DrawCard(rr, active, hov && !active);
+
+            if (hov && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
+                SpawnRipple(mouse.x, mouse.y, 90.0f);
                 jumpToNode(cur);
-                historyPush(currentSong->song);
                 loadAndPlay();
             }
 
             // Track number
-            DrawText(TextFormat("%d", scrollOffset+row+1),
-                     (int)rMain.x+14, (int)(rMain.y+42+row*ROW_H+9), 11, C_TXT3);
+            DrawText(TextFormat("%d", scrollOffset+row+1),(int)rr.x+10,(int)rr.y+17,11,C_TXT3);
 
-            // Title
-            std::string title = ClampStr(cur->song->title, 14, (int)rMain.width - 150);
-            DrawText(title.c_str(), (int)rMain.x+38, (int)(rMain.y+42+row*ROW_H+6), 14, active ? C_WHITE : C_TXT1);
-            DrawText(cur->song->artist.c_str(), (int)rMain.x+38, (int)(rMain.y+42+row*ROW_H+24), 11, active ? C_ACCENT : C_TXT3);
+            // Title + artist
+            std::string title = Clamp(cur->song->title,14,(int)rMain.width-165);
+            DrawText(title.c_str(),(int)rr.x+36,(int)rr.y+8,14,C_TXT1);
+            DrawText(cur->song->artist.c_str(),(int)rr.x+36,(int)rr.y+28,11,active?C_ACCENT:C_TXT3);
 
-            // Duration
-            int mm = cur->song->duration/60, ss = cur->song->duration%60;
-            const char* dur = TextFormat("%02d:%02d", mm, ss);
-            int dw = MeasureText(dur, 11);
-            DrawText(dur, (int)(rMain.x+rMain.width-dw-14), (int)(rMain.y+42+row*ROW_H+18), 11, C_TXT3);
+            // Duration right-aligned
+            int mm=cur->song->duration/60, ss=cur->song->duration%60;
+            const char* dur=TextFormat("%02d:%02d",mm,ss);
+            int dw=MeasureText(dur,11);
+            DrawText(dur,(int)(rr.x+rr.width-dw-10),(int)rr.y+17,11,C_TXT3);
 
+            // Play count indicator for active song
+            if (active) {
+                const char* pc = TextFormat("%d plays", cur->song->playCount);
+                int pw = MeasureText(pc,10);
+                DrawText(pc,(int)(rr.x+rr.width-dw-pw-20),(int)rr.y+17,10,C_ACCENT);
+            }
+
+            if (!repeatAll && cur->next == nullptr) break;
             cur = cur->next;
+            if (cur == playlistHead) break;
             row++;
         }
 
         // Scrollbar
         if (totalSongs > vr) {
-            float sbH  = rMain.height - 46;
-            float barH = sbH * vr / totalSongs;
-            float barY = rMain.y + 42 + sbH * scrollOffset / totalSongs;
-            DrawRectangle((int)(rMain.x+rMain.width-5), (int)(rMain.y+42), 3, (int)sbH, C_GLASS_HOV);
-            DrawRectangle((int)(rMain.x+rMain.width-5), (int)barY, 3, (int)barH, C_ACCENT);
+            float sbH = rMain.height-46, barH=sbH*vr/totalSongs;
+            float barY = rMain.y+42 + sbH*scrollOffset/totalSongs;
+            DrawRectangle((int)(rMain.x+rMain.width-4),(int)(rMain.y+42),2,(int)sbH,C_GLASS_HOV);
+            DrawRectangle((int)(rMain.x+rMain.width-4),(int)barY,2,(int)barH,C_ACCENT);
         }
 
     } else if (currentView == VIEW_MOST_PLAYED) {
-        Song* top[10]; int topCount = 0;
-        heapTopN(top, 10, topCount);
-        for (int i = 0; i < topCount && i < vr; i++) {
-            bool hovered = CheckCollisionPointRec(GetMousePosition(),
-                           {rMain.x+8, rMain.y+42+(float)(i*ROW_H), rMain.width-16, (float)(ROW_H-3)});
-            DrawCard({rMain.x+8, rMain.y+42+(float)(i*ROW_H), rMain.width-16, (float)(ROW_H-3)}, false, hovered);
+        Song* top[15]; int topCount=0;
+        heapTopN(top, 15, topCount);
+        for (int i=0;i<topCount&&i<vr;i++) {
+            Rectangle rr={rMain.x+8, rMain.y+42+(float)(i*ROW_H), rMain.width-16,(float)(ROW_H-4)};
+            bool hov=CheckCollisionPointRec(mouse,rr);
+            DrawCard(rr,false,hov);
 
             // Rank badge
-            DrawText(TextFormat("#%d", i+1), (int)rMain.x+14, (int)(rMain.y+42+i*ROW_H+16), 11, C_ACCENT);
-            std::string title = ClampStr(top[i]->title, 14, (int)rMain.width-160);
-            DrawText(title.c_str(), (int)rMain.x+42, (int)(rMain.y+42+i*ROW_H+6), 14, C_TXT1);
-            DrawText(top[i]->artist.c_str(), (int)rMain.x+42, (int)(rMain.y+42+i*ROW_H+24), 11, C_TXT3);
-            DrawText(TextFormat("%d plays", top[i]->playCount),
-                     (int)(rMain.x+rMain.width-80), (int)(rMain.y+42+i*ROW_H+16), 11, C_TXT3);
+            const char* rank=TextFormat("#%d",i+1);
+            DrawText(rank,(int)rr.x+10,(int)rr.y+17,11,C_ACCENT);
+
+            std::string title=Clamp(top[i]->title,14,(int)rMain.width-160);
+            DrawText(title.c_str(),(int)rr.x+42,(int)rr.y+8,14,C_TXT1);
+            DrawText(top[i]->artist.c_str(),(int)rr.x+42,(int)rr.y+28,11,C_TXT3);
+
+            const char* plays=TextFormat("%d plays",top[i]->playCount);
+            int pw=MeasureText(plays,11);
+            DrawText(plays,(int)(rr.x+rr.width-pw-10),(int)rr.y+17,11,C_ACCENT2);
         }
 
     } else { // VIEW_HISTORY
-        StackNode* cur = historyTop;
-        int row = 0;
-        while (cur && row < vr) {
-            DrawCard({rMain.x+8, rMain.y+42+(float)(row*ROW_H), rMain.width-16, (float)(ROW_H-3)}, false, false);
-            DrawText(TextFormat("%d", row+1), (int)rMain.x+14, (int)(rMain.y+42+row*ROW_H+16), 11, C_TXT3);
-            std::string title = ClampStr(cur->song->title, 14, (int)rMain.width-120);
-            DrawText(title.c_str(), (int)rMain.x+38, (int)(rMain.y+42+row*ROW_H+6), 14, C_TXT1);
-            DrawText(cur->song->artist.c_str(), (int)rMain.x+38, (int)(rMain.y+42+row*ROW_H+24), 11, C_TXT3);
-            cur = cur->next;
-            row++;
+        StackNode* cur=historyTop;
+        int row=0;
+        while (cur && row<vr) {
+            Rectangle rr={rMain.x+8,rMain.y+42+(float)(row*ROW_H),rMain.width-16,(float)(ROW_H-4)};
+            DrawCard(rr,false,false);
+            DrawText(TextFormat("%d",row+1),(int)rr.x+10,(int)rr.y+17,11,C_TXT3);
+            std::string title=Clamp(cur->song->title,14,(int)rMain.width-120);
+            DrawText(title.c_str(),(int)rr.x+36,(int)rr.y+8,14,C_TXT1);
+            DrawText(cur->song->artist.c_str(),(int)rr.x+36,(int)rr.y+28,11,C_TXT3);
+            cur=cur->next; row++;
         }
-        if (row == 0)
-            DrawText("No history yet — start playing!", (int)rMain.x+14, (int)rMain.y+60, 13, C_TXT3);
+        if (row==0) DrawText("No history yet — play a song!",(int)rMain.x+16,(int)rMain.y+60,13,C_TXT3);
     }
 }
 
-// ─── RIGHT PANEL: UP NEXT ────────────────────────────────────────────────────
+// ─── RIGHT PANEL ─────────────────────────────────────────────────────────────
 void DrawRightPanel() {
     DrawPanel(rRight);
-    DrawText("Up Next", (int)rRight.x+12, (int)rRight.y+12, 15, C_TXT1);
-    DrawLineEx({rRight.x+8, rRight.y+34}, {rRight.x+rRight.width-8, rRight.y+34}, 0.6f, C_BORDER);
+    DrawText("Up Next",(int)rRight.x+12,(int)rRight.y+12,16,C_TXT1);
+    DrawLineEx({rRight.x+8,rRight.y+34},{rRight.x+rRight.width-8,rRight.y+34},0.5f,C_BORDER);
 
     Node* c = currentSong ? currentSong->next : nullptr;
-    int row = 0;
-    while (c && c != playlistHead && row < 8) {
-        bool hov = CheckCollisionPointRec(GetMousePosition(),
-                   {rRight.x+6, rRight.y+40+(float)(row*48), rRight.width-12, 44});
-        DrawCard({rRight.x+6, rRight.y+40+(float)(row*48), rRight.width-12, 44}, false, hov);
+    if (c == playlistHead) c = nullptr; // avoid wrap in non-repeat
+    int row=0;
+    const int UNR_H = 48;
+    Vector2 mouse=GetMousePosition();
 
-        std::string title = ClampStr(c->song->title, 12, (int)rRight.width-26);
-        DrawText(title.c_str(), (int)rRight.x+12, (int)(rRight.y+42+row*48), 12, C_TXT1);
-        DrawText(c->song->artist.c_str(), (int)rRight.x+12, (int)(rRight.y+58+row*48), 10, C_TXT3);
+    while (c && c!=playlistHead && row<9) {
+        Rectangle rr={rRight.x+6, rRight.y+40+(float)(row*UNR_H), rRight.width-12, (float)(UNR_H-4)};
+        bool hov=CheckCollisionPointRec(mouse,rr);
+        DrawCard(rr,false,hov);
+
+        std::string title=Clamp(c->song->title,12,(int)rRight.width-24);
+        DrawText(title.c_str(),(int)rr.x+10,(int)rr.y+6,12,C_TXT1);
+        DrawText(c->song->artist.c_str(),(int)rr.x+10,(int)rr.y+24,10,C_TXT3);
 
         if (hov && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
-            historyPush(currentSong->song);
+            SpawnRipple(mouse.x,mouse.y,70.0f);
             jumpToNode(c);
             loadAndPlay();
         }
-        c = c->next;
+        c=c->next;
+        if (!repeatAll && c==nullptr) break;
+        if (c==playlistHead) break;
         row++;
     }
-    if (row == 0) {
-        DrawText(repeatAll ? "Repeat ON - loops" : "End of playlist",
-                 (int)rRight.x+12, (int)rRight.y+50, 11, C_TXT3);
-    }
+    if (row==0)
+        DrawText(repeatAll?"Looping playlist":"End of playlist",(int)rRight.x+12,(int)rRight.y+52,11,C_TXT3);
 }
 
 // ─── PLAYER BAR ──────────────────────────────────────────────────────────────
 void DrawPlayerBar() {
-    // Full-width glass bar
-    DrawRectangleRec(rPlayer, C_SURFACE);
-    // top highlight line
-    DrawLineEx({rPlayer.x, rPlayer.y}, {rPlayer.x+rPlayer.width, rPlayer.y}, 1.0f, C_BORDER);
+    // Background + top border line
+    DrawRectangleRec(rPlayer, C_SURF);
+    unsigned char la=(unsigned char)(80+70*(float)(0.5+0.5*sin(glowT*2.1f)));
+    DrawLineEx({rPlayer.x,rPlayer.y},{rPlayer.x+rPlayer.width,rPlayer.y},2.0f,{220,30,95,la});
 
-    // Glowing accent underline that pulses with music
-    float lineAlpha = (float)(80 + 100 * glowPulse);
-    DrawLineEx({rPlayer.x, rPlayer.y}, {rPlayer.x+rPlayer.width, rPlayer.y},
-               2.0f, {220, 30, 100, (unsigned char)lineAlpha});
+    int sw = GetScreenWidth();
 
     // ── Album art ──
-    Rectangle artR = {rPlayer.x+10, rPlayer.y+8, 80, 80};
-    if (albumArt.id > 0) {
-        Rectangle src = {0, 0, (float)albumArt.width, (float)albumArt.height};
-        DrawTexturePro(albumArt, src, artR, {0,0}, 0.0f, WHITE);
-        // rounded clip overlay
-        DrawRectangleRoundedLines(artR, 0.1f, 6, 1.5f, C_BORDER);
+    Rectangle artR={rPlayer.x+10, rPlayer.y+8, 86, 86};
+    if (albumArt.id>0) {
+        Rectangle src={0,0,(float)albumArt.width,(float)albumArt.height};
+        DrawTexturePro(albumArt,src,artR,{0,0},0.0f,WHITE);
+        DrawRectangleRoundedLines(artR,0.08f,6,1.2f,C_BORDER);
     } else {
-        DrawRectangleRounded(artR, 0.1f, 6, C_GLASS_HOV);
-        int tw = MeasureText("♪", 22); DrawText("♪", (int)(artR.x+artR.width/2-tw/2), (int)(artR.y+28), 22, C_TXT3);
+        DrawRectangleRounded(artR,0.08f,6,C_GLASS_HOV);
+        int tw=MeasureText("♪",26); DrawText("♪",(int)(artR.x+artR.width/2-tw/2),(int)(artR.y+28),26,C_TXT3);
     }
 
     // ── Song info ──
     if (currentSong) {
-        Song* s = currentSong->song;
-        std::string title = ClampStr(s->title, 16, 260);
-        DrawText(title.c_str(),    (int)rPlayer.x+100, (int)rPlayer.y+12, 16, C_TXT1);
-        DrawText(s->artist.c_str(),(int)rPlayer.x+100, (int)rPlayer.y+33, 12, C_TXT3);
-        DrawText(TextFormat("Genre: %s", s->genre.c_str()), (int)rPlayer.x+100, (int)rPlayer.y+50, 11, C_TXT3);
+        Song* s=currentSong->song;
+        std::string title=Clamp(s->title,17,270);
+        DrawText(title.c_str(),(int)rPlayer.x+106,(int)rPlayer.y+12,17,C_TXT1);
+        DrawText(s->artist.c_str(),(int)rPlayer.x+106,(int)rPlayer.y+34,12,C_TXT3);
+        DrawText(TextFormat("Genre: %s  •  %d plays",s->genre.c_str(),s->playCount),
+                 (int)rPlayer.x+106,(int)rPlayer.y+52,10,C_TXT3);
     } else {
-        DrawText("Select a song to play", (int)rPlayer.x+100, (int)rPlayer.y+30, 14, C_TXT3);
+        DrawText("Select a track",(int)rPlayer.x+106,(int)rPlayer.y+35,15,C_TXT3);
     }
 
-    // ── Controls (centred) ──
-    float cx = rPlayer.x + rPlayer.width / 2.0f;
-    float cy = rPlayer.y + 38;
+    // ── Controls (horizontally centred) ──
+    float cx = rPlayer.x + rPlayer.width/2.0f;
+    float cy = rPlayer.y + 40;
 
-    if (DrawCircleBtn({cx-80, cy}, 16, "|<"))  { prevSong(); historyPush(currentSong->song); loadAndPlay(); }
-    if (DrawCircleBtn({cx,    cy}, 22, isPlaying ? "||" : ">", isPlaying)) togglePause();
-    if (DrawCircleBtn({cx+80, cy}, 16, ">|"))  { nextSong(); historyPush(currentSong ? currentSong->song : nullptr); loadAndPlay(); }
+    if (CircleBtn({cx-82,cy},17,"|<")) { prevSong(); loadAndPlay(); }
+    if (CircleBtn({cx,   cy},24,isPlaying?"||":">",isPlaying)) togglePause();
+    if (CircleBtn({cx+82,cy},17,">|")) {
+        Node* prev=currentSong;
+        nextSong();
+        if (currentSong!=prev || repeatAll) loadAndPlay();
+    }
 
-    // Repeat toggle button
-    bool repHov = CheckCollisionPointCircle(GetMousePosition(), {cx+120, cy}, 14);
-    if (repHov && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) toggleRepeat();
-    Color repBdr = repeatAll ? C_ACCENT : (repHov ? C_BORDER_ACC : C_BORDER);
-    DrawCircleLinesV({cx+120, cy}, 14, repBdr);
-    int rw = MeasureText("R", 11); DrawText("R", (int)(cx+120-rw/2), (int)(cy-6), 11, repeatAll ? C_ACCENT : C_TXT3);
+    // Repeat toggle (R key also works)
+    Vector2 repC={cx+128,cy};
+    bool rHov=CheckCollisionPointCircle(GetMousePosition(),repC,14);
+    if (rHov && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) { SpawnRipple(repC.x,repC.y,28.0f); toggleRepeat(); }
+    Color rBdr=repeatAll?C_ACCENT:(rHov?C_BORD_ACC:C_BORDER);
+    DrawCircleLinesV(repC,14,rBdr);
+    int rw=MeasureText("R",11); DrawText("R",(int)(repC.x-rw/2),(int)(repC.y-6),11,repeatAll?C_ACCENT:C_TXT3);
 
     // ── Progress bar ──
-    float progress = 0.0f, timePlayed = 0.0f, timeLen = 1.0f;
+    float progress=0,timePlayed=0,timeLen=1;
     if (musicLoaded) {
-        timePlayed = GetMusicTimePlayed(musicStream);
-        timeLen    = GetMusicTimeLength(musicStream);
-        if (timeLen > 0.0f) progress = timePlayed / timeLen;
+        timePlayed=GetMusicTimePlayed(musicStream);
+        timeLen   =GetMusicTimeLength(musicStream);
+        if (timeLen>0) progress=timePlayed/timeLen;
     }
 
-    float barX = rPlayer.x + rPlayer.width/2.0f - 220;
-    float barY = rPlayer.y + 72;
-    float barW = 440.0f;
-
-    // Seekable
-    Rectangle seekArea = {barX-4, barY-8, barW+8, 20};
-    if (musicLoaded && CheckCollisionPointRec(GetMousePosition(), seekArea) && IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
-        float t = (GetMousePosition().x - barX) / barW;
-        if (t < 0) t = 0; if (t > 1) t = 1;
-        SeekMusicStream(musicStream, t * timeLen);
+    float barW=440, barX=rPlayer.x+rPlayer.width/2.0f - barW/2.0f, barY=rPlayer.y+78;
+    Rectangle seekArea={barX-6,barY-10,barW+12,22};
+    if (musicLoaded && CheckCollisionPointRec(GetMousePosition(),seekArea) && IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+        float t=(GetMousePosition().x-barX)/barW;
+        if(t<0)t=0; if(t>1)t=1;
+        SeekMusicStream(musicStream,t*timeLen);
     }
 
-    DrawRectangleRounded({barX, barY, barW, 4}, 1.0f, 4, C_SURFACE2);
-    if (progress > 0.005f)
-        DrawRectangleRounded({barX, barY, barW * progress, 4}, 1.0f, 4, C_ACCENT);
-    // Scrubber knob
-    float kx = barX + barW * progress;
-    DrawCircleV({kx, barY+2}, 7, C_WHITE);
-    DrawCircleLinesV({kx, barY+2}, 7, C_ACCENT);
+    DrawRectangleRounded({barX,barY,barW,4},1,4,C_SURF2);
+    if (progress>0.002f)
+        DrawRectangleRounded({barX,barY,barW*progress,4},1,4,C_ACCENT);
+    float kx=barX+barW*progress;
+    DrawCircleV({kx,barY+2},7,C_WHITE);
+    DrawCircleLinesV({kx,barY+2},7,C_ACCENT);
 
-    // Timestamps
-    int mp=(int)timePlayed/60, sp=(int)timePlayed%60;
-    int ml=(int)timeLen/60,    sl=(int)timeLen%60;
-    DrawText(TextFormat("%02d:%02d",mp,sp), (int)(barX-40),(int)(barY-2), 11, C_TXT3);
-    DrawText(TextFormat("%02d:%02d",ml,sl), (int)(barX+barW+8),(int)(barY-2), 11, C_TXT3);
+    int mp=(int)timePlayed/60,sp=(int)timePlayed%60;
+    int ml=(int)timeLen/60,sl=(int)timeLen%60;
+    DrawText(TextFormat("%02d:%02d",mp,sp),(int)(barX-42),(int)barY-2,11,C_TXT3);
+    DrawText(TextFormat("%02d:%02d",ml,sl),(int)(barX+barW+8),(int)barY-2,11,C_TXT3);
+
+    // ── Mini equalizer beside controls ──
+    DrawEqualizer(cx-200, rPlayer.y+10, 60, 30, isPlaying);
+    DrawEqualizer(cx+140, rPlayer.y+10, 60, 30, isPlaying);
 }

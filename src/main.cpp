@@ -7,50 +7,60 @@
 #include "MostPlayed.h"
 
 int main(void) {
-    SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_WINDOW_HIGHDPI);
-    InitWindow(SW, SH, "SpotiFYE");
+    // ── Window setup: borderless fullscreen ───────────────────────────────────
+    SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_WINDOW_HIGHDPI | FLAG_FULLSCREEN_MODE);
+    InitWindow(GetMonitorWidth(0), GetMonitorHeight(0), "SpotiFYE");
     SetTargetFPS(60);
     InitAudioDevice();
 
-    // ── Load library ─────────────────────────────────────────────────────────
+    // ── Load data ─────────────────────────────────────────────────────────────
     loadLibrary("assets/library.txt");
-
-    // ── Build playlist (doubly LL) and max-heap simultaneously ───────────────
     for (int i = 0; i < totalSongs; i++) {
         insertIntoPlaylist(librarySongs[i]);
         heapInsert(librarySongs[i]);
     }
 
     // Auto-play first song
-    if (currentSong) {
-        historyPush(currentSong->song);
-        loadAndPlay();
-    }
+    if (currentSong) loadAndPlay();
 
     // ── Main loop ─────────────────────────────────────────────────────────────
     while (!WindowShouldClose()) {
 
+        // Recompute layout every frame (fullscreen-aware)
+        UpdateLayout();
+        UpdateAnimations();
+        UpdateRipples();
+
         // Update audio stream
         if (musicLoaded) {
             UpdateMusicStream(musicStream);
-            // Auto-advance when track ends
+
+            // Auto-advance: only if there's a next song to go to
             float played = GetMusicTimePlayed(musicStream);
             float len    = GetMusicTimeLength(musicStream);
             if (isPlaying && len > 0.0f && played >= len - 0.15f) {
-                historyPush(currentSong->song);
+                Node* was = currentSong;
                 nextSong();
-                loadAndPlay();
+                if (currentSong != was) {
+                    loadAndPlay();
+                } else {
+                    // End of playlist, no repeat — just stop
+                    StopMusicStream(musicStream);
+                    isPlaying = false;
+                }
             }
         }
 
-        // Animate glow/pulse
-        UpdateAnimations();
-
-        // ── Keyboard ──────────────────────────────────────────────────────────
-        if (IsKeyPressed(KEY_RIGHT)) { historyPush(currentSong ? currentSong->song : nullptr); nextSong(); loadAndPlay(); }
+        // ── Keyboard shortcuts ────────────────────────────────────────────────
+        if (IsKeyPressed(KEY_RIGHT)) {
+            Node* was = currentSong;
+            nextSong();
+            if (currentSong != was || repeatAll) loadAndPlay();
+        }
         if (IsKeyPressed(KEY_LEFT))  { prevSong(); loadAndPlay(); }
         if (IsKeyPressed(KEY_SPACE)) togglePause();
         if (IsKeyPressed(KEY_R))     toggleRepeat();
+        if (IsKeyPressed(KEY_F11))   ToggleFullscreen();
 
         // ── Draw ──────────────────────────────────────────────────────────────
         BeginDrawing();
@@ -59,6 +69,7 @@ int main(void) {
             DrawPlaylistPanel();
             DrawRightPanel();
             DrawPlayerBar();
+            DrawRipples();
         EndDrawing();
     }
 
