@@ -1,12 +1,11 @@
-`@echo off
-echo =======================================
-echo Building Aura Music (C++ / Raylib)...
-echo =======================================
+@echo off
+echo =====================================
+echo   SpotiFYE - DSA Music Player Build
+echo =====================================
 
 if not exist build mkdir build
 
-:: Compile main.cpp and link with raylib statically
-g++ src\main.cpp -o build\AuraMusic.exe -I lib\include -L lib\lib -lraylib -lopengl32 -lgdi32 -lwinmm
+g++ src\main.cpp -o build\SpotiFYE.exe -I lib\include -L lib\lib -lraylib -lopengl32 -lgdi32 -lwinmm
 
 if %errorlevel% neq 0 (
     echo.
@@ -15,7 +14,7 @@ if %errorlevel% neq 0 (
     exit /b %errorlevel%
 )
 
-echo [SUCCESS] Build completed successfully!
+echo [SUCCESS] Build complete!
 echo.
-echo Starting Application...
-build\AuraMusic.exe
+echo Launching SpotiFYE...
+build\SpotiFYE.exe

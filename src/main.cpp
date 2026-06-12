@@ -3,59 +3,67 @@
 #include "ui_draw.h"
 #include "Library.h"
 #include "Playlist.h"
+#include "History.h"
+#include "MostPlayed.h"
 
 int main(void) {
-    // ── Window ───────────────────────────────────────────────────────────────
     SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_WINDOW_HIGHDPI);
-    InitWindow(SW, SH, "Aura Music");
+    InitWindow(SW, SH, "SpotiFYE");
     SetTargetFPS(60);
     InitAudioDevice();
 
-    // ── Data ─────────────────────────────────────────────────────────────────
+    // ── Load library ─────────────────────────────────────────────────────────
     loadLibrary("assets/library.txt");
+
+    // ── Build playlist (doubly LL) and max-heap simultaneously ───────────────
     for (int i = 0; i < totalSongs; i++) {
         insertIntoPlaylist(librarySongs[i]);
+        heapInsert(librarySongs[i]);
     }
 
-    // Auto-load the first song on startup
-    if (currentSong) loadAndPlayCurrent();
+    // Auto-play first song
+    if (currentSong) {
+        historyPush(currentSong->song);
+        loadAndPlay();
+    }
 
-    // ── Main Loop ─────────────────────────────────────────────────────────────
+    // ── Main loop ─────────────────────────────────────────────────────────────
     while (!WindowShouldClose()) {
 
-        // Update audio stream every frame
+        // Update audio stream
         if (musicLoaded) {
             UpdateMusicStream(musicStream);
-
-            // Auto advance when track ends
-            if (isPlaying && GetMusicTimePlayed(musicStream) >= GetMusicTimeLength(musicStream) - 0.1f) {
+            // Auto-advance when track ends
+            float played = GetMusicTimePlayed(musicStream);
+            float len    = GetMusicTimeLength(musicStream);
+            if (isPlaying && len > 0.0f && played >= len - 0.15f) {
+                historyPush(currentSong->song);
                 nextSong();
-                loadAndPlayCurrent();
+                loadAndPlay();
             }
         }
 
-        // ── Keyboard shortcuts ────────────────────────────────────────────────
-        if (IsKeyPressed(KEY_RIGHT)) { nextSong(); loadAndPlayCurrent(); }
-        if (IsKeyPressed(KEY_LEFT))  { prevSong(); loadAndPlayCurrent(); }
-        if (IsKeyPressed(KEY_SPACE)) { togglePause(); }
+        // Animate glow/pulse
+        UpdateAnimations();
 
-        // ── Draw ─────────────────────────────────────────────────────────────
+        // ── Keyboard ──────────────────────────────────────────────────────────
+        if (IsKeyPressed(KEY_RIGHT)) { historyPush(currentSong ? currentSong->song : nullptr); nextSong(); loadAndPlay(); }
+        if (IsKeyPressed(KEY_LEFT))  { prevSong(); loadAndPlay(); }
+        if (IsKeyPressed(KEY_SPACE)) togglePause();
+        if (IsKeyPressed(KEY_R))     toggleRepeat();
+
+        // ── Draw ──────────────────────────────────────────────────────────────
         BeginDrawing();
-            // Background gradient
-            DrawRectangleGradientEx({0, 0, (float)SW, (float)SH}, BG_TOP, BG_BOT, BG_BOT, BG_TOP);
-
+            ClearBackground(C_BG);
             DrawSidePanel();
             DrawPlaylistPanel();
             DrawRightPanel();
             DrawPlayerBar();
-
-            // FPS counter (dev aid, remove for submission)
-            DrawText(TextFormat("FPS: %d", GetFPS()), SW - 70, 6, 12, TXT_DIM);
         EndDrawing();
     }
 
     // ── Cleanup ───────────────────────────────────────────────────────────────
-    if (albumArt.id > 0) UnloadTexture(albumArt);
+    if (albumArt.id > 0)  UnloadTexture(albumArt);
     if (musicLoaded) { StopMusicStream(musicStream); UnloadMusicStream(musicStream); }
     CloseAudioDevice();
     CloseWindow();

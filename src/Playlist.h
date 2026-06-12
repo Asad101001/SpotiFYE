@@ -1,17 +1,22 @@
 #pragma once
 #include "Song.h"
 
-// Adapted directly from DSA_Labs/Week 3/Lab Task/doublyLinkedList.cpp
-// STRICTLY NON-OOP (Procedural)
+// ═══════════════════════════════════════════════════════════════════════════
+//  DOUBLY LINKED LIST PLAYLIST
+//  Adapted from Week 3 Lab Task / doublyLinkedList.cpp
+// ═══════════════════════════════════════════════════════════════════════════
+
 struct Node {
     Song* song;
     Node* next;
     Node* prev;
 };
 
-// Global pointers just like the lab tasks
 Node* playlistHead = nullptr;
-Node* currentSong = nullptr;
+Node* playlistTail = nullptr;  // track tail for O(1) insert
+Node* currentSong  = nullptr;
+
+bool  repeatAll    = false;    // circular repeat mode (Circular LL behaviour)
 
 void insertIntoPlaylist(Song* newSong) {
     Node* temp = new Node();
@@ -21,27 +26,51 @@ void insertIntoPlaylist(Song* newSong) {
 
     if (playlistHead == nullptr) {
         playlistHead = temp;
-        currentSong = playlistHead; // Default current to first song added
+        playlistTail = temp;
+        currentSong  = temp;
         return;
     }
 
-    Node* cur = playlistHead;
-    while (cur->next != nullptr) {
-        cur = cur->next;
-    }
+    // Append to tail (O(1) with tail pointer)
+    playlistTail->next = temp;
+    temp->prev         = playlistTail;
+    playlistTail       = temp;
 
-    cur->next = temp;
-    temp->prev = cur;
+    // If repeatAll: keep tail pointing back to head (circular)
+    if (repeatAll) playlistTail->next = playlistHead;
 }
 
+// Advance forward — wraps around if repeatAll
 void nextSong() {
-    if (currentSong != nullptr && currentSong->next != nullptr) {
+    if (!currentSong) return;
+    if (currentSong->next && currentSong->next != playlistHead) {
         currentSong = currentSong->next;
+    } else if (repeatAll) {
+        currentSong = playlistHead;   // circular wrap
     }
 }
 
+// Step backward
 void prevSong() {
-    if (currentSong != nullptr && currentSong->prev != nullptr) {
+    if (!currentSong) return;
+    if (currentSong->prev) {
         currentSong = currentSong->prev;
+    } else if (repeatAll) {
+        currentSong = playlistTail;   // circular wrap backward
     }
+}
+
+void toggleRepeat() {
+    repeatAll = !repeatAll;
+    // Update circular link
+    if (repeatAll && playlistTail) {
+        playlistTail->next = playlistHead;
+    } else if (playlistTail) {
+        playlistTail->next = nullptr;
+    }
+}
+
+// Jump directly to a specific node
+void jumpToNode(Node* target) {
+    if (target) currentSong = target;
 }
