@@ -10,23 +10,23 @@ struct Node {
 };
 
 // Global pointers just like the lab tasks
-inline Node* playlistHead = nullptr;
-inline Node* currentSong = nullptr;
+Node* playlistHead = NULL;
+Node* currentSong = NULL;
 
-inline void insertIntoPlaylist(Song* newSong) {
+void insertIntoPlaylist(Song* newSong) {
     Node* temp = new Node();
     temp->song = newSong;
-    temp->next = nullptr;
-    temp->prev = nullptr;
+    temp->next = NULL;
+    temp->prev = NULL;
 
-    if (playlistHead == nullptr) {
+    if (playlistHead == NULL) {
         playlistHead = temp;
         currentSong = playlistHead; // Default current to first song added
         return;
     }
 
     Node* cur = playlistHead;
-    while (cur->next != nullptr) {
+    while (cur->next != NULL) {
         cur = cur->next;
     }
 
@@ -34,14 +34,14 @@ inline void insertIntoPlaylist(Song* newSong) {
     temp->prev = cur;
 }
 
-inline void nextSong() {
-    if (currentSong != nullptr && currentSong->next != nullptr) {
+void nextSong() {
+    if (currentSong != NULL && currentSong->next != NULL) {
         currentSong = currentSong->next;
     }
 }
 
-inline void prevSong() {
-    if (currentSong != nullptr && currentSong->prev != nullptr) {
+void prevSong() {
+    if (currentSong != NULL && currentSong->prev != NULL) {
         currentSong = currentSong->prev;
     }
 }

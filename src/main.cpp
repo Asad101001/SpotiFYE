@@ -75,7 +75,7 @@ int main(void)
             
             Node* cur = playlistHead;
             int i = 0;
-            while (cur != nullptr) {
+            while (cur != NULL) {
                 // If it's the currently playing song, highlight it strongly
                 Color panelColor = (cur == currentSong) ? glassPanelHover : glassPanel;
                 Color textColor = (cur == currentSong) ? accentNeon : textPrimary;
@@ -105,7 +105,7 @@ int main(void)
             // Album Art Box Placeholder
             DrawRectangleRounded((Rectangle){bottomPlayer.x + 20, bottomPlayer.y + 20, 80, 80}, 0.1f, 8, DARKGRAY);
             
-            if (currentSong != nullptr) {
+            if (currentSong != NULL) {
                 DrawText("Now Playing", bottomPlayer.x + 120, bottomPlayer.y + 30, 20, textPrimary);
                 DrawText(TextFormat("%s - %s", currentSong->song->title.c_str(), currentSong->song->artist.c_str()), bottomPlayer.x + 120, bottomPlayer.y + 60, 16, textSecondary);
                 DrawText(TextFormat("Genre: %s | Rating: %.1f", currentSong->song->genre.c_str(), currentSong->song->rating), bottomPlayer.x + 120, bottomPlayer.y + 80, 14, accentNeon);

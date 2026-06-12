@@ -6,10 +6,10 @@
 
 // STRICTLY NON-OOP (Procedural Array instead of vectors/classes)
 const int MAX_SONGS = 100;
-inline Song* librarySongs[MAX_SONGS];
-inline int totalSongs = 0;
+Song* librarySongs[MAX_SONGS];
+int totalSongs = 0;
 
-inline void loadLibrary(const std::string& filename) {
+void loadLibrary(const std::string& filename) {
     std::ifstream file(filename);
     std::string line;
     totalSongs = 0;

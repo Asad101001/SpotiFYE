@@ -1,4 +1,4 @@
-@echo off
+`@echo off
 echo =======================================
 echo Building Aura Music (C++ / Raylib)...
 echo =======================================
