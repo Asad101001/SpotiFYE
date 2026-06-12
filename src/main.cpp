@@ -52,23 +52,45 @@ int main(void)
         insertIntoPlaylist(librarySongs[i]);
     }
 
-    // Texture state for dynamic Album Art
+    // Texture & Audio state for dynamic Album Art & Music playback
     Texture2D currentAlbumArt = { 0 };
+    Music currentMusic = { 0 };
+    bool isMusicLoaded = false;
     Node* lastTrackedSong = nullptr;
 
     // Main rendering loop
     while (!WindowShouldClose())
     {
-        // Check if the song has changed, update texture
+        // Check if the song has changed, update texture and music stream
         if (currentSong != lastTrackedSong) {
+            // Unload old texture
             if (currentAlbumArt.id > 0) {
                 UnloadTexture(currentAlbumArt); // Free old image from VRAM
                 currentAlbumArt.id = 0;
             }
-            if (currentSong != nullptr && !currentSong->song->coverPath.empty()) {
-                currentAlbumArt = LoadTexture(currentSong->song->coverPath.c_str());
+            // Unload old music
+            if (isMusicLoaded) {
+                StopMusicStream(currentMusic);
+                UnloadMusicStream(currentMusic);
+                isMusicLoaded = false;
+            }
+
+            if (currentSong != nullptr) {
+                if (!currentSong->song->coverPath.empty()) {
+                    currentAlbumArt = LoadTexture(currentSong->song->coverPath.c_str());
+                }
+                if (!currentSong->song->path.empty()) {
+                    currentMusic = LoadMusicStream(currentSong->song->path.c_str());
+                    PlayMusicStream(currentMusic);
+                    isMusicLoaded = true;
+                }
             }
             lastTrackedSong = currentSong;
+        }
+
+        // Keep the audio stream buffers filled
+        if (isMusicLoaded) {
+            UpdateMusicStream(currentMusic);
         }
 
         // Update logic (Keyboard Input for Playlist Navigation)
@@ -144,10 +166,20 @@ int main(void)
                 DrawText("No Song Playing", bottomPlayer.x + 120, bottomPlayer.y + 45, 20, textSecondary);
             }
             
-            // Dummy Progress Bar
+            // Real Progress Bar
+            float progress = 0.0f;
+            if (isMusicLoaded) {
+                float played = GetMusicTimePlayed(currentMusic);
+                float length = GetMusicTimeLength(currentMusic);
+                if (length > 0.0f) {
+                    progress = played / length;
+                }
+            }
             DrawRectangleRounded((Rectangle){bottomPlayer.x + 400, bottomPlayer.y + 60, 400, 6}, 1.0f, 8, glassBorder);
-            DrawRectangleRounded((Rectangle){bottomPlayer.x + 400, bottomPlayer.y + 60, 150, 6}, 1.0f, 8, accentNeon);
-            DrawCircle(bottomPlayer.x + 550, bottomPlayer.y + 63, 8, WHITE);
+            if (progress > 0.0f) {
+                DrawRectangleRounded((Rectangle){bottomPlayer.x + 400, bottomPlayer.y + 60, 400 * progress, 6}, 1.0f, 8, accentNeon);
+            }
+            DrawCircle(bottomPlayer.x + 400 + (400 * progress), bottomPlayer.y + 63, 8, WHITE);
             
             // Dummy Controls
             DrawText("|<", bottomPlayer.x + 560, bottomPlayer.y + 25, 24, textPrimary);
@@ -159,6 +191,10 @@ int main(void)
 
     if (currentAlbumArt.id > 0) {
         UnloadTexture(currentAlbumArt);
+    }
+    if (isMusicLoaded) {
+        StopMusicStream(currentMusic);
+        UnloadMusicStream(currentMusic);
     }
 
     // De-Initialization

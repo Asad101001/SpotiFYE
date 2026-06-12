@@ -37,6 +37,11 @@ void loadLibrary(const std::string& filename) {
         std::getline(ss, s->path, '|');
         std::getline(ss, s->coverPath, '|');
         
+        // Strip carriage return if present (Windows text files)
+        if (!s->coverPath.empty() && s->coverPath.back() == '\r') {
+            s->coverPath.pop_back();
+        }
+        
         librarySongs[totalSongs] = s;
         totalSongs++;
     }
