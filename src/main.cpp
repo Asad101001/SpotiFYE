@@ -1,6 +1,7 @@
 #include <raylib.h>
 
-Font appFont = {0};
+Font fontBold = {0};
+Font fontReg  = {0};
 
 #include "ui.h"
 #include "ui_draw.h"
@@ -21,8 +22,10 @@ int main(void) {
         ChangeDirectory("../");
     }
 
-    appFont = LoadFontEx("assets/font.ttf", 64, 0, 0);
-    SetTextureFilter(appFont.texture, TEXTURE_FILTER_BILINEAR);
+    fontBold = LoadFontEx("assets/Poppins-Bold.ttf", 64, 0, 0);
+    SetTextureFilter(fontBold.texture, TEXTURE_FILTER_BILINEAR);
+    fontReg = LoadFontEx("assets/Poppins-Regular.ttf", 64, 0, 0);
+    SetTextureFilter(fontReg.texture, TEXTURE_FILTER_BILINEAR);
 
     // ── Load data ─────────────────────────────────────────────────────────────
     loadLibrary("assets/library.txt");
@@ -85,7 +88,8 @@ int main(void) {
     }
 
     // ── Cleanup ───────────────────────────────────────────────────────────────
-    if (appFont.texture.id > 0) UnloadFont(appFont);
+    if (fontBold.texture.id > 0) UnloadFont(fontBold);
+    if (fontReg.texture.id > 0)  UnloadFont(fontReg);
     if (albumArt.id > 0)  UnloadTexture(albumArt);
     if (musicLoaded) { StopMusicStream(musicStream); UnloadMusicStream(musicStream); }
     CloseAudioDevice();

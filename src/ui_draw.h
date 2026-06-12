@@ -61,8 +61,8 @@ void DrawSidePanel() {
     DrawPanel(rSide);
 
     // Title
-    DrawText("SpotiFYE", (int)rSide.x+14, (int)rSide.y+12, 22, C_ACCENT);
-    DrawText("Music Player", (int)rSide.x+14, (int)rSide.y+37, 10, C_TXT3);
+    DrawTextBold("SpotiFYE", (int)rSide.x+14, (int)rSide.y+12, 28, C_ACCENT);
+    DrawText("Music Player", (int)rSide.x+14, (int)rSide.y+42, 12, C_TXT3);
     DrawLineEx({rSide.x+8, rSide.y+54}, {rSide.x+rSide.width-8, rSide.y+54}, 0.5f, C_BORDER);
 
     // Nav buttons
@@ -101,7 +101,7 @@ void DrawPlaylistPanel() {
     DrawPanel(rMain);
 
     const char* titles[] = {"All Songs","Most Played","Playback History"};
-    DrawText(titles[currentView], (int)rMain.x+14, (int)rMain.y+12, 17, C_TXT1);
+    DrawTextBold(titles[currentView], (int)rMain.x+14, (int)rMain.y+10, 20, C_TXT1);
     DrawLineEx({rMain.x+8, rMain.y+36}, {rMain.x+rMain.width-8, rMain.y+36}, 0.5f, C_BORDER);
 
     int vr = visibleRows();
@@ -139,8 +139,8 @@ void DrawPlaylistPanel() {
 
             // Title + artist
             std::string title = Clamp(cur->song->title,14,(int)rMain.width-165);
-            DrawText(title.c_str(),(int)rr.x+36,(int)rr.y+8,14,C_TXT1);
-            DrawText(cur->song->artist.c_str(),(int)rr.x+36,(int)rr.y+28,11,active?C_ACCENT:C_TXT3);
+            DrawTextBold(title.c_str(),(int)rr.x+36,(int)rr.y+6,16,C_TXT1);
+            DrawText(cur->song->artist.c_str(),(int)rr.x+36,(int)rr.y+26,12,active?C_ACCENT:C_TXT3);
 
             // Duration right-aligned
             int mm=cur->song->duration/60, ss=cur->song->duration%60;
@@ -182,8 +182,8 @@ void DrawPlaylistPanel() {
             DrawText(rank,(int)rr.x+10,(int)rr.y+17,11,C_ACCENT);
 
             std::string title=Clamp(top[i]->title,14,(int)rMain.width-160);
-            DrawText(title.c_str(),(int)rr.x+42,(int)rr.y+8,14,C_TXT1);
-            DrawText(top[i]->artist.c_str(),(int)rr.x+42,(int)rr.y+28,11,C_TXT3);
+            DrawTextBold(title.c_str(),(int)rr.x+42,(int)rr.y+6,16,C_TXT1);
+            DrawText(top[i]->artist.c_str(),(int)rr.x+42,(int)rr.y+26,12,C_TXT3);
 
             const char* plays=TextFormat("%d plays",top[i]->playCount);
             int pw=MeasureText(plays,11);
@@ -198,8 +198,8 @@ void DrawPlaylistPanel() {
             DrawCard(rr,false,false);
             DrawText(TextFormat("%d",row+1),(int)rr.x+10,(int)rr.y+17,11,C_TXT3);
             std::string title=Clamp(cur->song->title,14,(int)rMain.width-120);
-            DrawText(title.c_str(),(int)rr.x+36,(int)rr.y+8,14,C_TXT1);
-            DrawText(cur->song->artist.c_str(),(int)rr.x+36,(int)rr.y+28,11,C_TXT3);
+            DrawTextBold(title.c_str(),(int)rr.x+36,(int)rr.y+6,16,C_TXT1);
+            DrawText(cur->song->artist.c_str(),(int)rr.x+36,(int)rr.y+26,12,C_TXT3);
             cur=cur->next; row++;
         }
         if (row==0) DrawText("No history yet — play a song!",(int)rMain.x+16,(int)rMain.y+60,13,C_TXT3);
@@ -209,7 +209,7 @@ void DrawPlaylistPanel() {
 // ─── RIGHT PANEL ─────────────────────────────────────────────────────────────
 void DrawRightPanel() {
     DrawPanel(rRight);
-    DrawText("Up Next",(int)rRight.x+12,(int)rRight.y+12,16,C_TXT1);
+    DrawTextBold("Up Next",(int)rRight.x+12,(int)rRight.y+10,18,C_TXT1);
     DrawLineEx({rRight.x+8,rRight.y+34},{rRight.x+rRight.width-8,rRight.y+34},0.5f,C_BORDER);
 
     Node* c = currentSong ? currentSong->next : nullptr;
@@ -224,8 +224,8 @@ void DrawRightPanel() {
         DrawCard(rr,false,hov);
 
         std::string title=Clamp(c->song->title,12,(int)rRight.width-24);
-        DrawText(title.c_str(),(int)rr.x+10,(int)rr.y+6,12,C_TXT1);
-        DrawText(c->song->artist.c_str(),(int)rr.x+10,(int)rr.y+24,10,C_TXT3);
+        DrawTextBold(title.c_str(),(int)rr.x+10,(int)rr.y+4,14,C_TXT1);
+        DrawText(c->song->artist.c_str(),(int)rr.x+10,(int)rr.y+22,11,C_TXT3);
 
         if (hov && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
             SpawnRipple(mouse.x,mouse.y,70.0f);
@@ -265,10 +265,10 @@ void DrawPlayerBar() {
     if (currentSong) {
         Song* s=currentSong->song;
         std::string title=Clamp(s->title,17,270);
-        DrawText(title.c_str(),(int)rPlayer.x+106,(int)rPlayer.y+12,17,C_TXT1);
-        DrawText(s->artist.c_str(),(int)rPlayer.x+106,(int)rPlayer.y+34,12,C_TXT3);
+        DrawTextBold(title.c_str(),(int)rPlayer.x+106,(int)rPlayer.y+10,19,C_TXT1);
+        DrawText(s->artist.c_str(),(int)rPlayer.x+106,(int)rPlayer.y+32,13,C_TXT3);
         DrawText(TextFormat("Genre: %s  •  %d plays",s->genre.c_str(),s->playCount),
-                 (int)rPlayer.x+106,(int)rPlayer.y+52,10,C_TXT3);
+                 (int)rPlayer.x+106,(int)rPlayer.y+52,11,C_TXT3);
     } else {
         DrawText("Select a track",(int)rPlayer.x+106,(int)rPlayer.y+35,15,C_TXT3);
     }
