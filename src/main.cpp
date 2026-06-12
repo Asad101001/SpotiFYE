@@ -1,4 +1,7 @@
 #include <raylib.h>
+#include <iostream>
+#include "Library.h"
+#include "Playlist.h"
 
 // Define Premium Colors for "Liquid Audio" Theme
 const Color bgTopLeft = { 18, 15, 30, 255 };
@@ -38,6 +41,19 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "Aura Music - Premium DSA Project");
     SetTargetFPS(60);
 
+    // Initialize Audio Device
+    InitAudioDevice();
+
+    // Load Data Structures
+    Library lib;
+    lib.loadFromCSV("assets/library.txt");
+
+    Playlist currentPlaylist;
+    // Push all loaded songs into the doubly linked list playlist
+    for (Song* s : lib.allSongs) {
+        currentPlaylist.insert(s);
+    }
+
     // Main rendering loop
     while (!WindowShouldClose())
     {
@@ -58,11 +74,23 @@ int main(void)
 
             // 3. Middle Panel: Playlist / Core View
             DrawGlassPanel(mainContent, "Current Playlist");
-            // Placeholder song entries
-            for (int i = 0; i < 8; i++) {
-                DrawRectangleRounded((Rectangle){mainContent.x + 20, mainContent.y + 70 + (i * 60), mainContent.width - 40, 50}, 0.2f, 8, glassPanelHover);
-                DrawText(TextFormat("Track %d - Synthwave Boy", i + 1), mainContent.x + 35, mainContent.y + 85 + (i * 60), 16, textPrimary);
-                DrawText("03:45", mainContent.x + mainContent.width - 70, mainContent.y + 85 + (i * 60), 16, textSecondary);
+            
+            Node* cur = currentPlaylist.head;
+            int i = 0;
+            while (cur != nullptr) {
+                // If it's the currently playing song, highlight it strongly
+                Color panelColor = (cur == currentPlaylist.current) ? glassPanelHover : glassPanel;
+                Color textColor = (cur == currentPlaylist.current) ? accentNeon : textPrimary;
+
+                DrawRectangleRounded((Rectangle){mainContent.x + 20, mainContent.y + 70 + (i * 60), mainContent.width - 40, 50}, 0.2f, 8, panelColor);
+                DrawText(TextFormat("%d. %s - %s", i + 1, cur->song->title.c_str(), cur->song->artist.c_str()), mainContent.x + 35, mainContent.y + 85 + (i * 60), 16, textColor);
+                
+                int mins = cur->song->duration / 60;
+                int secs = cur->song->duration % 60;
+                DrawText(TextFormat("%02d:%02d", mins, secs), mainContent.x + mainContent.width - 70, mainContent.y + 85 + (i * 60), 16, textSecondary);
+                
+                cur = cur->next;
+                i++;
             }
 
             // 4. Right Panel: Algorithms, Graph & Stats
@@ -75,10 +103,17 @@ int main(void)
 
             // 5. Bottom Panel: Media Player Controls
             DrawGlassPanel(bottomPlayer, nullptr);
-            // Dummy Album Art Box
+            
+            // Album Art Box Placeholder
             DrawRectangleRounded((Rectangle){bottomPlayer.x + 20, bottomPlayer.y + 20, 80, 80}, 0.1f, 8, DARKGRAY);
-            DrawText("Now Playing", bottomPlayer.x + 120, bottomPlayer.y + 30, 20, textPrimary);
-            DrawText("Neon Nights - Synthwave Boy", bottomPlayer.x + 120, bottomPlayer.y + 60, 16, textSecondary);
+            
+            if (currentPlaylist.current != nullptr) {
+                DrawText("Now Playing", bottomPlayer.x + 120, bottomPlayer.y + 30, 20, textPrimary);
+                DrawText(TextFormat("%s - %s", currentPlaylist.current->song->title.c_str(), currentPlaylist.current->song->artist.c_str()), bottomPlayer.x + 120, bottomPlayer.y + 60, 16, textSecondary);
+                DrawText(TextFormat("Genre: %s | Rating: %.1f", currentPlaylist.current->song->genre.c_str(), currentPlaylist.current->song->rating), bottomPlayer.x + 120, bottomPlayer.y + 80, 14, accentNeon);
+            } else {
+                DrawText("No Song Playing", bottomPlayer.x + 120, bottomPlayer.y + 45, 20, textSecondary);
+            }
             
             // Dummy Progress Bar
             DrawRectangleRounded((Rectangle){bottomPlayer.x + 400, bottomPlayer.y + 60, 400, 6}, 1.0f, 8, glassBorder);
@@ -94,6 +129,7 @@ int main(void)
     }
 
     // De-Initialization
+    CloseAudioDevice();
     CloseWindow();
     return 0;
 }

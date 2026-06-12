@@ -1,0 +1,6 @@
+# title|artist|genre|duration_sec|playCount|rating|path|coverPath
+Blinding Lights|The Weeknd|Synthpop|200|450|4.9|assets/songs/blinding_lights.mp3|assets/covers/after_hours.jpg
+Midnight City|M83|Electronic|243|320|4.8|assets/songs/midnight_city.mp3|assets/covers/hurry_up.jpg
+Nightcall|Kavinsky|Synthwave|259|210|4.7|assets/songs/nightcall.mp3|assets/covers/outrun.jpg
+Starboy|The Weeknd|Pop|230|510|4.9|assets/songs/starboy.mp3|assets/covers/starboy.jpg
+Resonance|HOME|Chillwave|212|180|4.6|assets/songs/resonance.mp3|assets/covers/odyssey.jpg
