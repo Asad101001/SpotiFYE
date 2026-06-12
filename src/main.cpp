@@ -44,14 +44,12 @@ int main(void)
     // Initialize Audio Device
     InitAudioDevice();
 
-    // Load Data Structures
-    Library lib;
-    lib.loadFromCSV("assets/library.txt");
+    // Load Data Structures procedurally
+    loadLibrary("assets/library.txt");
 
-    Playlist currentPlaylist;
     // Push all loaded songs into the doubly linked list playlist
-    for (Song* s : lib.allSongs) {
-        currentPlaylist.insert(s);
+    for (int i = 0; i < totalSongs; i++) {
+        insertIntoPlaylist(librarySongs[i]);
     }
 
     // Main rendering loop
@@ -75,14 +73,14 @@ int main(void)
             // 3. Middle Panel: Playlist / Core View
             DrawGlassPanel(mainContent, "Current Playlist");
             
-            Node* cur = currentPlaylist.head;
+            Node* cur = playlistHead;
             int i = 0;
             while (cur != nullptr) {
                 // If it's the currently playing song, highlight it strongly
-                Color panelColor = (cur == currentPlaylist.current) ? glassPanelHover : glassPanel;
-                Color textColor = (cur == currentPlaylist.current) ? accentNeon : textPrimary;
+                Color panelColor = (cur == currentSong) ? glassPanelHover : glassPanel;
+                Color textColor = (cur == currentSong) ? accentNeon : textPrimary;
 
-                DrawRectangleRounded((Rectangle){mainContent.x + 20, mainContent.y + 70 + (i * 60), mainContent.width - 40, 50}, 0.2f, 8, panelColor);
+                DrawRectangleRounded((Rectangle){mainContent.x + 20, mainContent.y + 70 + (float)(i * 60), mainContent.width - 40, 50}, 0.2f, 8, panelColor);
                 DrawText(TextFormat("%d. %s - %s", i + 1, cur->song->title.c_str(), cur->song->artist.c_str()), mainContent.x + 35, mainContent.y + 85 + (i * 60), 16, textColor);
                 
                 int mins = cur->song->duration / 60;
@@ -107,10 +105,10 @@ int main(void)
             // Album Art Box Placeholder
             DrawRectangleRounded((Rectangle){bottomPlayer.x + 20, bottomPlayer.y + 20, 80, 80}, 0.1f, 8, DARKGRAY);
             
-            if (currentPlaylist.current != nullptr) {
+            if (currentSong != nullptr) {
                 DrawText("Now Playing", bottomPlayer.x + 120, bottomPlayer.y + 30, 20, textPrimary);
-                DrawText(TextFormat("%s - %s", currentPlaylist.current->song->title.c_str(), currentPlaylist.current->song->artist.c_str()), bottomPlayer.x + 120, bottomPlayer.y + 60, 16, textSecondary);
-                DrawText(TextFormat("Genre: %s | Rating: %.1f", currentPlaylist.current->song->genre.c_str(), currentPlaylist.current->song->rating), bottomPlayer.x + 120, bottomPlayer.y + 80, 14, accentNeon);
+                DrawText(TextFormat("%s - %s", currentSong->song->title.c_str(), currentSong->song->artist.c_str()), bottomPlayer.x + 120, bottomPlayer.y + 60, 16, textSecondary);
+                DrawText(TextFormat("Genre: %s | Rating: %.1f", currentSong->song->genre.c_str(), currentSong->song->rating), bottomPlayer.x + 120, bottomPlayer.y + 80, 14, accentNeon);
             } else {
                 DrawText("No Song Playing", bottomPlayer.x + 120, bottomPlayer.y + 45, 20, textSecondary);
             }

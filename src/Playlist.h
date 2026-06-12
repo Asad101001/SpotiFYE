@@ -1,63 +1,47 @@
 #pragma once
 #include "Song.h"
-#include <iostream>
 
 // Adapted directly from DSA_Labs/Week 3/Lab Task/doublyLinkedList.cpp
+// STRICTLY NON-OOP (Procedural)
 struct Node {
     Song* song;
     Node* next;
     Node* prev;
 };
 
-class Playlist {
-public:
-    Node* head;
-    Node* current; // Pointer to the currently playing song
+// Global pointers just like the lab tasks
+inline Node* playlistHead = nullptr;
+inline Node* currentSong = nullptr;
 
-    Playlist() {
-        head = nullptr;
-        current = nullptr;
+inline void insertIntoPlaylist(Song* newSong) {
+    Node* temp = new Node();
+    temp->song = newSong;
+    temp->next = nullptr;
+    temp->prev = nullptr;
+
+    if (playlistHead == nullptr) {
+        playlistHead = temp;
+        currentSong = playlistHead; // Default current to first song added
+        return;
     }
 
-    void insert(Song* newSong) {
-        Node* temp = new Node();
-        temp->song = newSong;
-        temp->next = nullptr;
-        temp->prev = nullptr;
-
-        if (head == nullptr) {
-            head = temp;
-            current = head; // Default current to first song added
-            return;
-        }
-
-        Node* cur = head;
-        while (cur->next != nullptr) {
-            cur = cur->next;
-        }
-
-        cur->next = temp;
-        temp->prev = cur;
+    Node* cur = playlistHead;
+    while (cur->next != nullptr) {
+        cur = cur->next;
     }
 
-    void nextSong() {
-        if (current != nullptr && current->next != nullptr) {
-            current = current->next;
-        }
-    }
+    cur->next = temp;
+    temp->prev = cur;
+}
 
-    void prevSong() {
-        if (current != nullptr && current->prev != nullptr) {
-            current = current->prev;
-        }
+inline void nextSong() {
+    if (currentSong != nullptr && currentSong->next != nullptr) {
+        currentSong = currentSong->next;
     }
+}
 
-    void displayConsole() {
-        Node* cur = head;
-        while (cur != nullptr) {
-            std::cout << cur->song->title << " -> ";
-            cur = cur->next;
-        }
-        std::cout << "NULL" << std::endl;
+inline void prevSong() {
+    if (currentSong != nullptr && currentSong->prev != nullptr) {
+        currentSong = currentSong->prev;
     }
-};
+}
