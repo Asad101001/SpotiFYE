@@ -49,7 +49,10 @@ void loadAndPlay() {
 }
 
 void togglePause() {
-    if (!musicLoaded) return;
+    if (!musicLoaded) {
+        if (currentSong) loadAndPlay();
+        return;
+    }
     if (isPlaying) { PauseMusicStream(musicStream); isPlaying = false; }
     else           { ResumeMusicStream(musicStream); isPlaying = true;  }
 }
