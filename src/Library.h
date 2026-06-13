@@ -10,7 +10,7 @@
 //  Pattern: global array + size counter (matches lab Week 1 / arrays pattern)
 // ═══════════════════════════════════════════════════════════════════════════
 
-const int  MAX_SONGS = 100;
+const int  MAX_SONGS = 1000;
 Song*      librarySongs[MAX_SONGS];
 int        totalSongs = 0;
 

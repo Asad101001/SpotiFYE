@@ -341,7 +341,21 @@ void DrawPlayerBar() {
     if (CircleBtn({cx - 76, cy}, 16, "|<")) { prevSong(); loadAndPlay(); }
 
     // Play / Pause
-    if (CircleBtn({cx, cy}, 24, isPlaying ? "||" : ">", isPlaying)) togglePause();
+    Vector2 ppC = {cx, cy};
+    bool ppHov = CheckCollisionPointCircle(GetMousePosition(), ppC, 24);
+    if (ppHov && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) { SpawnRipple(ppC.x, ppC.y, 48.0f); togglePause(); }
+    Color ppBg = isPlaying ? C_ACCENT : (ppHov ? C_GLASS_HOV : C_GLASS);
+    Color ppBdr = ppHov ? C_ACCENT2 : (isPlaying ? C_ACCENT : C_BORDER);
+    DrawCircleV(ppC, 24, ppBg);
+    DrawCircleLinesV(ppC, 24, ppBdr);
+    
+    Color iCol = isPlaying ? C_WHITE : C_TXT1;
+    if (isPlaying) {
+        DrawRectangle((int)ppC.x - 6, (int)ppC.y - 7, 4, 14, iCol);
+        DrawRectangle((int)ppC.x + 2, (int)ppC.y - 7, 4, 14, iCol);
+    } else {
+        DrawTriangle({ppC.x - 4, ppC.y - 8}, {ppC.x - 4, ppC.y + 8}, {ppC.x + 7, ppC.y}, iCol);
+    }
 
     // Next
     if (CircleBtn({cx + 76, cy}, 16, ">|")) {

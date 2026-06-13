@@ -8,7 +8,7 @@
 //  upHeapify / downHeapify match the exact lab naming and structure.
 // ═══════════════════════════════════════════════════════════════════════════
 
-const int HEAP_MAX  = 200;
+const int HEAP_MAX  = 1000;
 Song*     heapArr[HEAP_MAX];
 int       heapSize  = 0;
 

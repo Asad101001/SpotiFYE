@@ -37,8 +37,8 @@ int main(void) {
         heapInsert(librarySongs[i]);
     }
 
-    // Auto-play first song
-    if (currentSong) loadAndPlay();
+    // Do not auto-play on startup
+    // if (currentSong) loadAndPlay();
 
     // ── Main loop ─────────────────────────────────────────────────────────────
     while (!WindowShouldClose()) {
