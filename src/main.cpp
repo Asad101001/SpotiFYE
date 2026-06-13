@@ -22,10 +22,13 @@ int main(void) {
         ChangeDirectory("../");
     }
 
+    // Using Poppins with mipmaps to ensure the font looks perfectly crisp when scaled down
     fontBold = LoadFontEx("assets/Poppins-Bold.ttf", 64, 0, 0);
-    SetTextureFilter(fontBold.texture, TEXTURE_FILTER_BILINEAR);
+    GenTextureMipmaps(&fontBold.texture);
+    SetTextureFilter(fontBold.texture, TEXTURE_FILTER_TRILINEAR);
     fontReg = LoadFontEx("assets/Poppins-Regular.ttf", 64, 0, 0);
-    SetTextureFilter(fontReg.texture, TEXTURE_FILTER_BILINEAR);
+    GenTextureMipmaps(&fontReg.texture);
+    SetTextureFilter(fontReg.texture, TEXTURE_FILTER_TRILINEAR);
 
     // ── Load data ─────────────────────────────────────────────────────────────
     loadLibrary("assets/library.txt");
@@ -88,11 +91,13 @@ int main(void) {
     }
 
     // ── Cleanup ───────────────────────────────────────────────────────────────
-    if (fontBold.texture.id > 0) UnloadFont(fontBold);
-    if (fontReg.texture.id > 0)  UnloadFont(fontReg);
-    if (albumArt.id > 0)  UnloadTexture(albumArt);
     if (musicLoaded) { StopMusicStream(musicStream); UnloadMusicStream(musicStream); }
     CloseAudioDevice();
+    if (fontBold.texture.id > 0) UnloadFont(fontBold);
+    if (fontReg.texture.id  > 0) UnloadFont(fontReg);
+    cleanupHistory();
+    cleanupPlaylist();
+    cleanupLibrary();   // frees textures + Song* heap objects
     CloseWindow();
     return 0;
 }
