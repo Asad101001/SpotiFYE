@@ -4,7 +4,7 @@
   <p><strong>A high-fidelity, liquid-glass AMOLED music player built with pure procedural C++, Raylib, and custom Data Structures & Algorithms.</strong></p>
 
   <p>
-    <a href="#-video-preview"><img src="https://img.shields.io/badge/Demo-Video%20Preview-DC1E64?style=for-the-badge&logo=youtube&logoColor=white" alt="Video Demo"/></a>
+    <a href="https://raw.githubusercontent.com/Asad101001/SpotiFYE/main/assets/demo.mp4"><img src="https://img.shields.io/badge/▶️_Play_Demo-Watch_Video-DC1E64?style=for-the-badge&logo=youtube&logoColor=white" alt="Play Demo Video"/></a>
     <img src="https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white" alt="C++"/>
     <img src="https://img.shields.io/badge/Raylib-000000?style=for-the-badge&logo=raylib&logoColor=white" alt="Raylib"/>
     <img src="https://img.shields.io/badge/Architecture-Procedural_DSA-ff69b4?style=for-the-badge" alt="Procedural DSA"/>
@@ -16,12 +16,24 @@
 
 ---
 
-## 🎬 Video Preview
+## 🎬 Video Showcase & Demo
 
-Experience **SpotiFYE** in action — featuring smooth 60 FPS liquid glass animations, real-time equalizer visualizations, interactive track seeking, and custom DSA-powered navigation:
+Experience **SpotiFYE** in action — featuring 60 FPS liquid glass animations, real-time equalizer visualizations, interactive track seeking, and custom DSA-powered navigation:
 
 <div align="center">
-  <video src="assets/demo.mp4" controls width="100%" style="max-width: 850px; border-radius: 12px; box-shadow: 0px 8px 30px rgba(220, 30, 95, 0.3);"></video>
+  <a href="https://raw.githubusercontent.com/Asad101001/SpotiFYE/main/assets/demo.mp4">
+    <img src="assets/preview.png" alt="SpotiFYE Video Preview" width="100%" style="max-width: 850px; border-radius: 12px; box-shadow: 0px 8px 30px rgba(220, 30, 95, 0.4);"/>
+  </a>
+  <br/><br/>
+  <p>
+    <a href="https://raw.githubusercontent.com/Asad101001/SpotiFYE/main/assets/demo.mp4">
+      <img src="https://img.shields.io/badge/▶️_Click_To_Play_Video-Full_HD_MP4-DC1E64?style=for-the-badge&logo=youtube&logoColor=white" alt="Click To Play Video"/>
+    </a>
+    <a href="https://github.com/Asad101001/SpotiFYE/releases/tag/v1.0.0">
+      <img src="https://img.shields.io/badge/📦_GitHub_Release-v1.0.0-blue?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Release"/>
+    </a>
+  </p>
+  <video src="https://raw.githubusercontent.com/Asad101001/SpotiFYE/main/assets/demo.mp4" controls width="100%" poster="https://raw.githubusercontent.com/Asad101001/SpotiFYE/main/assets/preview.png" style="max-width: 850px; border-radius: 12px;"></video>
 </div>
 
 ---
@@ -110,6 +122,7 @@ g++ src\main.cpp assets\resource.res -o build\SpotiFYE.exe -I lib\include -L lib
 SpotiFYE/
 ├── assets/
 │   ├── demo.mp4               # Demo preview video
+│   ├── preview.png            # High-resolution video preview poster
 │   ├── icon.ico               # Windows application icon
 │   ├── library.txt            # Track metadata store
 │   ├── Poppins-Bold.ttf       # UI Header typography
