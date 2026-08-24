@@ -15,12 +15,12 @@
 
 ---
 
-## 🎬 Video Showcase & Demo
+## 🎬 Video Showcase & Demo (1080p 60 FPS)
 
 Experience **SpotiFYE** in action — featuring 60 FPS liquid glass animations, real-time equalizer visualizations, interactive track seeking, and custom DSA-powered navigation:
 
 <div align="center">
-  <video src="https://github.com/user-attachments/assets/93e9097a-57db-4f42-92da-1158e24487d0" controls="controls" style="max-width: 850px; width: 100%; border-radius: 12px; box-shadow: 0px 8px 30px rgba(220, 30, 95, 0.4);"></video>
+  <video src="https://github.com/user-attachments/assets/5932c2ae-6f5e-453d-a55e-a367dc464dc1" controls="controls" width="100%" style="width: 100%; max-width: 100%; border-radius: 12px;"></video>
 </div>
 
 ---
@@ -108,8 +108,8 @@ g++ src\main.cpp assets\resource.res -o build\SpotiFYE.exe -I lib\include -L lib
 ```text
 SpotiFYE/
 ├── assets/
-│   ├── demo.mp4               # Demo preview video
-│   ├── preview.png            # High-resolution video preview poster
+│   ├── demo.mp4               # Crisp 1080p 60 FPS demo video
+│   ├── preview.png            # 1080p video preview poster
 │   ├── icon.ico               # Windows application icon
 │   ├── library.txt            # Track metadata store
 │   ├── Poppins-Bold.ttf       # UI Header typography
