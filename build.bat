@@ -1,6 +1,8 @@
 @echo off
 cls
 
+if not exist build mkdir build
+
 echo [1/3] Compiling application icon...
 windres assets\resource.rc -O coff -o assets\resource.res
 
